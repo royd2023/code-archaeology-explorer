@@ -10,6 +10,9 @@ An interactive tool that analyzes git repositories to uncover "fossils" - dead c
 - **Timeline Visualization**: See how your code evolved over time
 
 ## Setup
+```bash
+git clone https://github.com/royd2023/code-archaeology-explorer.git
+```
 
 ### Backend
 ```bash
