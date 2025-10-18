@@ -32,6 +32,8 @@ def analyze_repository():
         "repo_path": "/path/to/repo" OR "repo_url": "https://github.com/user/repo"
     }
     """
+    temp_dir = None  # Track temp directory for cleanup
+
     try:
         data = request.json
         repo_path = data.get('repo_path')
@@ -97,11 +99,24 @@ def analyze_repository():
         }
 
         print("Analysis complete!")
+
+        # Clean up temp directory if it was created
+        if temp_dir and os.path.exists(temp_dir):
+            print(f"Cleaning up temporary repository at {temp_dir}...")
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            print("Cleanup complete!")
+
         return jsonify(result)
 
     except Exception as e:
         print(f"Error during analysis: {str(e)}")
         traceback.print_exc()
+
+        # Clean up temp directory even on error
+        if temp_dir and os.path.exists(temp_dir):
+            print(f"Cleaning up temporary repository at {temp_dir}...")
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
         return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
 
 
