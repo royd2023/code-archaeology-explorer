@@ -822,6 +822,174 @@
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
+/* Timeline - Long Museum Corridor with Perspective */
+.museum-content[data-exhibit="timeline"] {
+  background:
+    /* Corridor perspective gradient */
+    linear-gradient(to right,
+      rgba(101, 67, 33, 0.4) 0%,
+      rgba(139, 90, 43, 0.25) 20%,
+      rgba(176, 146, 100, 0.2) 50%,
+      rgba(139, 90, 43, 0.25) 80%,
+      rgba(101, 67, 33, 0.4) 100%
+    ),
+    /* Ceiling to floor gradient */
+    linear-gradient(180deg,
+      rgba(120, 80, 50, 0.3) 0%,
+      rgba(160, 120, 80, 0.2) 30%,
+      rgba(180, 140, 100, 0.15) 70%,
+      rgba(140, 100, 60, 0.25) 100%
+    );
+  position: relative;
+}
+
+/* Arched ceiling effect */
+.museum-content[data-exhibit="timeline"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background:
+    radial-gradient(ellipse at top,
+      transparent 0%,
+      rgba(101, 67, 33, 0.2) 40%,
+      rgba(80, 50, 30, 0.35) 100%
+    );
+  border-bottom: 3px solid rgba(218, 165, 32, 0.3);
+  box-shadow:
+    inset 0 -30px 50px rgba(0, 0, 0, 0.3),
+    0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+/* Floor pattern with perspective */
+.museum-content[data-exhibit="timeline"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background:
+    /* Floor tile pattern */
+    repeating-linear-gradient(
+      90deg,
+      rgba(139, 90, 43, 0.15) 0px,
+      rgba(139, 90, 43, 0.15) 50px,
+      rgba(101, 67, 33, 0.2) 50px,
+      rgba(101, 67, 33, 0.2) 100px
+    ),
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(80, 50, 30, 0.2) 50%,
+      rgba(60, 40, 20, 0.35) 100%
+    );
+  border-top: 3px solid rgba(139, 90, 43, 0.3);
+  box-shadow:
+    inset 0 20px 40px rgba(0, 0, 0, 0.25),
+    0 -3px 10px rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+/* Display frames pattern on the walls */
+.museum-content[data-exhibit="timeline"] .exhibit {
+  position: relative;
+  background:
+    /* Subtle wall pattern */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 150px,
+      rgba(218, 165, 32, 0.1) 150px,
+      rgba(218, 165, 32, 0.1) 152px,
+      transparent 152px,
+      transparent 200px
+    );
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+/* Ensure content appears above decorative elements */
+.museum-content[data-exhibit="timeline"] .exhibit-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Timeline - Vertical with corridor theme remains */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 100px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #daa520 0%, rgba(218, 165, 32, 0.3) 100%);
+}
+
+.timeline-event {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(101, 67, 33, 0.2) 0%, rgba(139, 90, 43, 0.2) 100%);
+  border-left: 5px solid #daa520;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.timeline-event::before {
+  content: '';
+  position: absolute;
+  left: 85px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #daa520;
+  border-radius: 50%;
+  border: 3px solid #2c1810;
+  box-shadow: 0 0 0 5px rgba(218, 165, 32, 0.3);
+}
+
+.timeline-event:hover {
+  transform: translateX(10px);
+  box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4);
+}
+
+.timeline-date {
+  flex-shrink: 0;
+  font-weight: bold;
+  color: #daa520;
+  min-width: 110px;
+  font-family: 'Georgia', serif;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-message {
+  color: #f5deb3;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.timeline-meta {
+  color: #d2b48c;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
 .exhibit h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
