@@ -37,3 +37,7 @@ npm run dev
 2. Start the frontend dev server
 3. Enter a git repository path or URL
 4. Explore your code archaeology findings!
+
+
+## Video
+https://drive.google.com/file/d/1CeuX89PlaQsGe05oEfWaqwSPSDi8gzB_/view?usp=sharing
