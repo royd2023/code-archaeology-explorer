@@ -333,7 +333,7 @@ function App() {
               </button>
             </div>
 
-            <div className="museum-content">
+            <div className="museum-content" data-exhibit={activeExhibit}>
               <div key={activeExhibit} className={`exhibit-wrapper slide-${slideDirection}`}>
                 {renderExhibit()}
               </div>
