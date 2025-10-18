@@ -564,6 +564,119 @@
   z-index: 1;
 }
 
+/* TODOs & Ancient Code - Hieroglyphics Gallery / Egyptian Temple */
+.museum-content[data-exhibit="todos"],
+.museum-content[data-exhibit="oldest_code"] {
+  background:
+    /* Warm sandstone temple walls */
+    linear-gradient(180deg,
+      rgba(218, 165, 32, 0.25) 0%,
+      rgba(222, 184, 135, 0.3) 30%,
+      rgba(210, 180, 140, 0.25) 60%,
+      rgba(205, 133, 63, 0.3) 100%
+    );
+  position: relative;
+}
+
+/* Papyrus scroll on the left */
+.museum-content[data-exhibit="todos"]::before,
+.museum-content[data-exhibit="oldest_code"]::before {
+  content: '📜';
+  position: absolute;
+  left: 15px;
+  top: 20%;
+  font-size: 140px;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(-15deg);
+  text-shadow: 3px 3px 10px rgba(218, 165, 32, 0.4);
+}
+
+/* Ancient amphora/jar on the right */
+.museum-content[data-exhibit="todos"]::after,
+.museum-content[data-exhibit="oldest_code"]::after {
+  content: '🏺';
+  position: absolute;
+  right: 20px;
+  bottom: 15%;
+  font-size: 120px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(10deg);
+  text-shadow: -3px 3px 10px rgba(205, 133, 63, 0.4);
+}
+
+/* Hieroglyphic pattern background */
+.museum-content[data-exhibit="todos"] .exhibit,
+.museum-content[data-exhibit="oldest_code"] .exhibit {
+  position: relative;
+  background:
+    /* Vertical lines mimicking hieroglyphic columns */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(218, 165, 32, 0.08) 80px,
+      rgba(218, 165, 32, 0.08) 82px
+    ),
+    /* Horizontal lines for papyrus texture */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 15px,
+      rgba(205, 133, 63, 0.05) 15px,
+      rgba(205, 133, 63, 0.05) 16px
+    );
+}
+
+/* Ancient writing symbols scattered */
+.museum-content[data-exhibit="todos"] .exhibit::before,
+.museum-content[data-exhibit="oldest_code"] .exhibit::before {
+  content: '𓂀 𓃭 𓆣';
+  position: absolute;
+  left: 5%;
+  bottom: 10%;
+  font-size: 40px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 20px;
+  color: rgba(218, 165, 32, 0.6);
+}
+
+/* Papyrus border effect at top */
+.museum-content[data-exhibit="todos"] .exhibit::after,
+.museum-content[data-exhibit="oldest_code"] .exhibit::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 50px;
+  background:
+    linear-gradient(to bottom,
+      rgba(222, 184, 135, 0.25) 0%,
+      rgba(210, 180, 140, 0.15) 50%,
+      transparent 100%
+    );
+  border-bottom: 3px solid rgba(218, 165, 32, 0.25);
+  box-shadow:
+    0 3px 0 rgba(205, 133, 63, 0.15),
+    0 6px 0 rgba(205, 133, 63, 0.1),
+    inset 0 10px 20px rgba(218, 165, 32, 0.1);
+  z-index: 0;
+}
+
+/* Ensure content appears above decorative elements */
+.museum-content[data-exhibit="todos"] .exhibit-wrapper,
+.museum-content[data-exhibit="oldest_code"] .exhibit-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
 .exhibit h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
