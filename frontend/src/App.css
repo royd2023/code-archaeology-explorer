@@ -677,6 +677,151 @@
   z-index: 1;
 }
 
+/* Hall of Shame - Dark Catacombs/Vault */
+.museum-content[data-exhibit="hall_of_shame"] {
+  background:
+    /* Dark underground vault gradient */
+    radial-gradient(ellipse at center,
+      rgba(40, 20, 10, 0.6) 0%,
+      rgba(20, 10, 5, 0.8) 50%,
+      rgba(10, 5, 0, 0.9) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(60, 20, 20, 0.3) 0%,
+      rgba(30, 10, 10, 0.5) 50%,
+      rgba(10, 5, 5, 0.7) 100%
+    );
+  position: relative;
+  border-color: rgba(139, 0, 0, 0.5) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.8),
+    inset 0 0 50px rgba(139, 0, 0, 0.2) !important;
+}
+
+/* Torch on the left wall */
+.museum-content[data-exhibit="hall_of_shame"]::before {
+  content: '🔥';
+  position: absolute;
+  left: 30px;
+  top: 15%;
+  font-size: 80px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  animation: flicker 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8))
+          drop-shadow(0 0 40px rgba(255, 69, 0, 0.6));
+}
+
+/* Torch on the right wall */
+.museum-content[data-exhibit="hall_of_shame"]::after {
+  content: '🔥';
+  position: absolute;
+  right: 30px;
+  top: 15%;
+  font-size: 80px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  animation: flicker 2.3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8))
+          drop-shadow(0 0 40px rgba(255, 69, 0, 0.6));
+}
+
+/* Flickering torch animation */
+@keyframes flicker {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  75% {
+    opacity: 0.65;
+    transform: scale(1.02);
+  }
+}
+
+/* Stone vault texture */
+.museum-content[data-exhibit="hall_of_shame"] .exhibit {
+  position: relative;
+  background:
+    /* Stone brick pattern */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 60px,
+      rgba(80, 40, 40, 0.15) 60px,
+      rgba(80, 40, 40, 0.15) 62px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 100px,
+      rgba(80, 40, 40, 0.1) 100px,
+      rgba(80, 40, 40, 0.1) 102px
+    );
+}
+
+/* Ominous warning symbols */
+.museum-content[data-exhibit="hall_of_shame"] .exhibit::before {
+  content: '⚠️';
+  position: absolute;
+  right: 10%;
+  bottom: 15%;
+  font-size: 70px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(-20deg);
+  filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.5));
+}
+
+/* Dark archway/vault ceiling effect at top */
+.museum-content[data-exhibit="hall_of_shame"] .exhibit::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background:
+    radial-gradient(ellipse at top,
+      transparent 0%,
+      rgba(10, 5, 5, 0.4) 50%,
+      rgba(20, 10, 10, 0.6) 100%
+    );
+  border-bottom: 2px solid rgba(139, 0, 0, 0.3);
+  box-shadow:
+    inset 0 -20px 40px rgba(0, 0, 0, 0.6),
+    0 5px 10px rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+/* Ensure content appears above decorative elements */
+.museum-content[data-exhibit="hall_of_shame"] .exhibit-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Make text more visible in dark theme */
+.museum-content[data-exhibit="hall_of_shame"] .exhibit h2 {
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(218, 165, 32, 0.5);
+}
+
+.museum-content[data-exhibit="hall_of_shame"] .story-text,
+.museum-content[data-exhibit="hall_of_shame"] .artifact-text {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 .exhibit h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
