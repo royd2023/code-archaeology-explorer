@@ -1,5 +1,7 @@
 # Code Archaeology Explorer
 
+For Claude Builder Club @ OSU Challenge
+
 An interactive tool that analyzes git repositories to uncover "fossils" - dead code, abandoned features, and forgotten TODOs - and presents them as a museum exhibit with AI-generated narratives.
 
 ## Features
