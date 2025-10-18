@@ -82,7 +82,8 @@ def analyze_repository():
             'commented_code_story': story_gen.generate_artifact_story('commented_code', artifacts['commented_code']),
             'todos_story': story_gen.generate_artifact_story('todos', artifacts['todos']),
             'oldest_code_story': story_gen.generate_artifact_story('oldest_code', artifacts['oldest_code']),
-            'hall_of_shame_story': story_gen.generate_artifact_story('hall_of_shame', artifacts['hall_of_shame'])
+            'hall_of_shame_story': story_gen.generate_artifact_story('hall_of_shame', artifacts['hall_of_shame']),
+            'complexity_heatmap_story': story_gen.generate_artifact_story('complexity_heatmap', artifacts['complexity_heatmap'])
         }
 
         # Combine artifacts and stories

@@ -58,6 +58,14 @@ Longest/Most Complex Functions:
 
 Be dramatic and entertaining about their size and complexity."""
 
+        elif artifact_type == 'complexity_heatmap':
+            prompt = f"""You are a code archaeologist analyzing code complexity with scientific instruments. Write a professional yet engaging narrative (2-3 sentences) about these complexity findings, as if presenting laboratory analysis results.
+
+Complexity Analysis Results:
+{self._format_complexity_heatmap(artifacts)}
+
+Use scientific/analytical language. Mention how complexity is measured by decisions, nesting depth, and lines of code. Make it sound like a lab report but keep it accessible."""
+
         else:
             prompt = "Describe these code artifacts."
 
@@ -137,4 +145,11 @@ Write an exciting opening to the museum exhibit. Make it sound like an archaeolo
         lines = []
         for item in artifacts[:5]:
             lines.append(f"- Function '{item['name']}' in {item['file']} ({item['length']} lines long)")
+        return '\n'.join(lines)
+
+    def _format_complexity_heatmap(self, artifacts):
+        """Format complexity heatmap for the prompt."""
+        lines = []
+        for item in artifacts[:5]:  # Limit to top 5 most complex
+            lines.append(f"- {item['file']}: Complexity {item['score']} ({item['level'].upper()}) - {item['loc']} LOC, {item['decisions']} decisions, {item['max_depth']} max depth")
         return '\n'.join(lines)

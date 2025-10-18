@@ -1,5 +1,46 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
+
+// LocalStorage utilities
+const STORAGE_KEY = 'code-archaeology-saved-repos'
+
+const getSavedRepos = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch (error) {
+    console.error('Error loading saved repos:', error)
+    return []
+  }
+}
+
+const saveRepo = (repo) => {
+  try {
+    const saved = getSavedRepos()
+    // Check if repo already exists
+    const exists = saved.some(r => r.path === repo.path && r.isLocal === repo.isLocal)
+    if (!exists) {
+      const updated = [repo, ...saved].slice(0, 10) // Keep only last 10
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+    }
+    return getSavedRepos()
+  } catch (error) {
+    console.error('Error saving repo:', error)
+    return getSavedRepos()
+  }
+}
+
+const deleteRepo = (repo) => {
+  try {
+    const saved = getSavedRepos()
+    const updated = saved.filter(r => !(r.path === repo.path && r.isLocal === repo.isLocal))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+    return updated
+  } catch (error) {
+    console.error('Error deleting repo:', error)
+    return getSavedRepos()
+  }
+}
 
 function App() {
   const [repoInput, setRepoInput] = useState('')
@@ -9,8 +50,15 @@ function App() {
   const [error, setError] = useState(null)
   const [activeExhibit, setActiveExhibit] = useState('summary')
   const [slideDirection, setSlideDirection] = useState('right')
+  const [savedRepos, setSavedRepos] = useState([])
+  const [showSavedRepos, setShowSavedRepos] = useState(false)
 
-  const exhibits = ['summary', 'dead_code', 'commented_code', 'todos', 'oldest_code', 'hall_of_shame', 'timeline']
+  const exhibits = ['summary', 'dead_code', 'commented_code', 'todos', 'oldest_code', 'hall_of_shame', 'complexity_heatmap', 'timeline']
+
+  // Load saved repos on mount
+  useEffect(() => {
+    setSavedRepos(getSavedRepos())
+  }, [])
 
   const handleExhibitChange = (newExhibit) => {
     const currentIndex = exhibits.indexOf(activeExhibit)
@@ -50,11 +98,64 @@ function App() {
       const data = await response.json()
       setResults(data)
       setActiveExhibit('summary')
+
+      // Save repo to localStorage after successful analysis
+      const repoToSave = {
+        path: repoInput,
+        isLocal: isLocal,
+        analyzedAt: new Date().toISOString(),
+        name: isLocal ? repoInput.split(/[/\\]/).pop() : repoInput.split('/').pop()
+      }
+      const updated = saveRepo(repoToSave)
+      setSavedRepos(updated)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleLoadSavedRepo = async (repo) => {
+    setRepoInput(repo.path)
+    setIsLocal(repo.isLocal)
+    setShowSavedRepos(false)
+
+    // Automatically start analysis
+    setLoading(true)
+    setError(null)
+    setResults(null)
+
+    try {
+      const payload = repo.isLocal
+        ? { repo_path: repo.path }
+        : { repo_url: repo.path }
+
+      const response = await fetch('http://localhost:5000/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Analysis failed')
+      }
+
+      const data = await response.json()
+      setResults(data)
+      setActiveExhibit('summary')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDeleteSavedRepo = (repo) => {
+    const updated = deleteRepo(repo)
+    setSavedRepos(updated)
   }
 
   const renderExhibit = () => {
@@ -197,6 +298,45 @@ function App() {
           </div>
         )
 
+      case 'complexity_heatmap':
+        return (
+          <div className="exhibit">
+            <h2>🌡️ Complexity Heatmap</h2>
+            <div className="story-text">{stories.complexity_heatmap_story}</div>
+            <div className="heatmap-grid">
+              {artifacts.complexity_heatmap.map((item, idx) => (
+                <div key={idx} className={`heatmap-card complexity-${item.level}`}>
+                  <div className="heatmap-file">📄 {item.file}</div>
+                  <div className="heatmap-score">
+                    <span className="score-label">Complexity:</span>
+                    <span className="score-value">{item.score}</span>
+                  </div>
+                  <div className="heatmap-metrics">
+                    <div className="metric">
+                      <span className="metric-icon">📏</span>
+                      <span className="metric-value">{item.loc} LOC</span>
+                    </div>
+                    <div className="metric">
+                      <span className="metric-icon">🔀</span>
+                      <span className="metric-value">{item.decisions} decisions</span>
+                    </div>
+                    <div className="metric">
+                      <span className="metric-icon">🪜</span>
+                      <span className="metric-value">{item.max_depth} depth</span>
+                    </div>
+                  </div>
+                  <div className={`complexity-badge badge-${item.level}`}>
+                    {item.level.toUpperCase()}
+                  </div>
+                </div>
+              ))}
+              {artifacts.complexity_heatmap.length === 0 && (
+                <div className="empty-state">No complexity data available.</div>
+              )}
+            </div>
+          </div>
+        )
+
       case 'timeline':
         return (
           <div className="exhibit">
@@ -250,6 +390,45 @@ function App() {
               </button>
             </div>
 
+            {savedRepos.length > 0 && (
+              <div className="saved-repos-section">
+                <button
+                  className="saved-repos-toggle"
+                  onClick={() => setShowSavedRepos(!showSavedRepos)}
+                >
+                  📚 Saved Repositories ({savedRepos.length})
+                </button>
+
+                {showSavedRepos && (
+                  <div className="saved-repos-list">
+                    {savedRepos.map((repo, idx) => (
+                      <div key={idx} className="saved-repo-item">
+                        <div className="saved-repo-info" onClick={() => handleLoadSavedRepo(repo)}>
+                          <div className="saved-repo-name">
+                            {repo.isLocal ? '💻' : '🌐'} {repo.name}
+                          </div>
+                          <div className="saved-repo-path">{repo.path}</div>
+                          <div className="saved-repo-date">
+                            Last analyzed: {new Date(repo.analyzedAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <button
+                          className="saved-repo-delete"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteSavedRepo(repo)
+                          }}
+                          title="Delete from saved repos"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <input
               type="text"
               className="repo-input"
@@ -260,7 +439,7 @@ function App() {
               }
               value={repoInput}
               onChange={(e) => setRepoInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAnalyze()}
+              onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
             />
 
             <button
@@ -324,6 +503,12 @@ function App() {
                 onClick={() => handleExhibitChange('hall_of_shame')}
               >
                 🐉 Hall of Shame
+              </button>
+              <button
+                className={`nav-btn ${activeExhibit === 'complexity_heatmap' ? 'active' : ''}`}
+                onClick={() => handleExhibitChange('complexity_heatmap')}
+              >
+                🌡️ Heatmap
               </button>
               <button
                 className={`nav-btn ${activeExhibit === 'timeline' ? 'active' : ''}`}

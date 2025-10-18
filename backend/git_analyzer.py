@@ -200,6 +200,77 @@ class GitArchaeologist:
         hall_of_shame.sort(key=lambda x: x['length'], reverse=True)
         return hall_of_shame[:10]
 
+    def analyze_complexity_heatmap(self):
+        """Analyze file complexity for heatmap visualization."""
+        file_complexity = []
+
+        for root, dirs, files in os.walk(self.repo_path):
+            if '.git' in root or 'node_modules' in root or '__pycache__' in root:
+                continue
+
+            for file in files:
+                # Support multiple file types
+                if file.endswith(('.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.h')):
+                    file_path = os.path.join(root, file)
+                    relative_path = file_path.replace(self.repo_path, '').replace('\\', '/').lstrip('/')
+
+                    try:
+                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            content = f.read()
+                            lines = content.split('\n')
+
+                        # Calculate complexity metrics
+                        loc = len([line for line in lines if line.strip() and not line.strip().startswith('#')])
+
+                        # Count decision points (if, for, while, case, etc.)
+                        decisions = (
+                            content.count(' if ') + content.count(' if(') +
+                            content.count(' for ') + content.count(' for(') +
+                            content.count(' while ') + content.count(' while(') +
+                            content.count(' case ') + content.count(' switch') +
+                            content.count(' catch') + content.count(' &&') + content.count(' ||')
+                        )
+
+                        # Count nesting depth (approximation using indentation)
+                        max_indent = 0
+                        for line in lines:
+                            if line.strip():
+                                indent = len(line) - len(line.lstrip())
+                                max_indent = max(max_indent, indent // 4)  # Assuming 4-space indents
+
+                        # Calculate complexity score
+                        # Formula: weighted sum of metrics
+                        complexity_score = (
+                            (loc * 0.5) +           # Lines of code
+                            (decisions * 3) +        # Decision points (higher weight)
+                            (max_indent * 5)         # Nesting depth (highest weight)
+                        )
+
+                        # Categorize complexity
+                        if complexity_score < 50:
+                            complexity_level = 'low'
+                        elif complexity_score < 150:
+                            complexity_level = 'medium'
+                        elif complexity_score < 300:
+                            complexity_level = 'high'
+                        else:
+                            complexity_level = 'critical'
+
+                        file_complexity.append({
+                            'file': relative_path,
+                            'loc': loc,
+                            'decisions': decisions,
+                            'max_depth': max_indent,
+                            'score': round(complexity_score, 2),
+                            'level': complexity_level
+                        })
+                    except:
+                        pass
+
+        # Sort by complexity score
+        file_complexity.sort(key=lambda x: x['score'], reverse=True)
+        return file_complexity[:30]  # Return top 30 files
+
     def excavate(self):
         """Run full archaeological dig and return all artifacts."""
         print("Starting archaeological excavation...")
@@ -210,7 +281,8 @@ class GitArchaeologist:
             'todos': self.find_todos(),
             'oldest_code': self.find_oldest_code(),
             'timeline': self.get_repository_timeline(),
-            'hall_of_shame': self.get_hall_of_shame()
+            'hall_of_shame': self.get_hall_of_shame(),
+            'complexity_heatmap': self.analyze_complexity_heatmap()
         }
 
         print(f"Excavation complete! Found {sum(len(v) if isinstance(v, list) else 0 for v in artifacts.values())} artifacts")
