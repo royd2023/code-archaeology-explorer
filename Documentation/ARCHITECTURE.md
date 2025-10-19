@@ -164,6 +164,8 @@
    │
    ├─→ Hall of Shame exhibit
    │
+   ├─→ Heatmap exhibit
+   │
    └─→ Timeline exhibit
 ```
 
